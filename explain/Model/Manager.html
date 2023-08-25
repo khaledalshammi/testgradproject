@@ -1,0 +1,70 @@
+--Manager--
+encapsulate database query at the model level that allows you to
+define methods that retrieve specific sets of data
+The most popular manager in django that's objects => Model name . objects so, we can build more managers
+Two types of managers that are Custom QuerySets and Managers
+The Differences Between them are the way of calling (invoking)
+Custom Manager: querying and managing objects at the model level.
+Custom QuerySet: methods are accessible via the model's manager
+Examples about Custom QuerySet
+First Example:
+
+class BookQuerySet(models.QuerySet):
+    def published_books(self):
+        return self.filter(published=True)
+
+class Book(models.Model):
+    published = models.BooleanField(default=False)
+    objects = BookQuerySet.as_manager()
+
+how to call it?
+the answer is: Book.objects.published_books()
+
+Second Example:
+
+class ProductQuerySet(models.QuerySet):
+    def price_sorted(self):
+        return self.order_by('price')
+    def expensive(self):
+        return self.filter(price__gte=50)
+
+class Product(models.Model):
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    objects = ProductQuerySet.as_manager()
+
+how to call them?
+the answer is: Product.objects.price_sorted(), Product.objects.expensive()
+
+
+Examples about Custom Manager
+First Example:
+
+class PublishedBookManager(models.Manager):
+    def published_books(self):
+        return self.filter(published=True)
+
+class Book(models.Model):
+    published = models.BooleanField(default=False)
+    published_objects = PublishedBookManager()
+
+how to call it?
+the answer is:
+Book.published_objects.all() to retrieve all books.
+Book.published_objects.published_books() to retrive books depends on published_books function
+
+Second Example:
+
+class CustomFilterManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().order_by('price')
+    def expensive_books(self):
+        return self.filter(price__gte=50)
+
+class Book(models.Model):
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    custom_filter = CustomFilterManager()
+
+how to call it?
+the answer is:
+Book.custom_filter.all() to retrieve all books order by price because we overridden get_queryset.
+Book.custom_filter.expensive_books() to retrive books depends on expensive_books function

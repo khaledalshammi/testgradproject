@@ -1,0 +1,38 @@
+--On Delete--
+class Author(models.Model):
+name = models.CharField(max_length=100)
+
+class Book(models.Model):
+title = models.CharField(max_length=100)
+author = models.ForeignKey(Author, on_delete)
+
+Each other could have multiple books, each book could be related to one author.
+What will happen if author is deleted?
+Will the books be deleted with author or it will not be related to the author or it will be bind with another author?
+Your are the one who can decide what will happen.
+You have 5 approaches.
+
+CASCADE
+author = models.ForeignKey(Author, on_delete=models.CASCADE)
+If the author is deleted. the related books will also be deleted.
+
+SET_NULL
+author = models.ForeignKey(Author, on_delete=models.SET_NULL, null=True, blank=True)
+If the author is deleted. the related books will not be binded to that author so the author field in book will be null.
+
+PROTECT and RESTRICT
+author = models.ForeignKey(Author, on_delete=models.PROTECT)
+author = models.ForeignKey(Author, on_delete=models.RESTRICT)
+If the author has related books. author can't be deleated until it become unrelated to any book so,
+You won't be able to delete a Author as long as it has associated books objects.
+
+DO_NOTHING
+author = models.ForeignKey(Author, on_delete=models.DO_NOTHING)
+If author is deleted. the related books will still have the deleted author ForeignKey reference.
+Example: if the book related to author id = 1, if author is deleted. the ForeignKey reference still equal 1.
+
+SET_DEFAULT
+author = models.ForeignKey(Author, on_delete=models.SET_DEFAULT, default=1)
+If the author is deleted. the related books will be bind with default id author.
+Example: if the book related to author id = 2, if author id = 2 is deleted.
+the ForeignKey reference will equal 1, so it will be binded with author id = 1.

@@ -1,0 +1,30 @@
+--Inheritance - Abstraction--
+We use inheritance to reduce the replication
+Example: assume we have 3 tables that used created at. 
+
+class Car(models.Model):
+    ...
+    created_at = models.DateTimeField()
+class Category(models.Model):
+    ...
+    created_at = models.DateTimeField()
+class Product(models.Model):
+    ...
+    created_at = models.DateTimeField()
+
+Instead of inserting created_at 3 times we can put it in separated models then we can inherit it.
+Solution:
+class CreatedAt(models.Model):
+    created_at = models.DateTimeField()
+class Car(CreatedAt):
+class Category(CreatedAt):
+class Product(CreatedAt):
+Wow it's much better.
+Car, Category and Product still have created_at = models.DateTimeField() but instead of repeating the same code 3 times.
+We put it in separated Model then we inherit it.
+In previous example it doesn't make sense to create object from CreatedAt so, we can unable creating object from it by using abstraction.
+class CreatedAt(models.Model):
+    created_at = models.DateTimeField()
+
+    class Meta:
+        abstract = True

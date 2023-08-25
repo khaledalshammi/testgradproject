@@ -1,0 +1,88 @@
+--FieldTypes--
+Boolean
+above_20 = models.BooleanField()
+It will accept two value True or False
+
+Date
+event_date = models.DateField()
+It will store date like year-month-day without time
+example:
+Stored: event_date = "2023-08-24"
+Display: August 24, 2023
+
+DateTime
+appointment_datetime = models.DateTimeField()
+It will store date and time like year-month-day-hours-minutes-seconds
+example:
+Stored: appointment_datetime = "2023-08-24 15:30:00"
+Display: August 24, 2023, 3:30 PM
+
+Time
+scheduled_time = models.TimeField()
+It will store time like hours-minutes-seconds without date
+example:
+Stored: scheduled_time = "15:30:00"
+Display: 3:30 PM
+
+Char
+name = models.CharField(max_length=200)
+It used for short to medium length with predefined maximum length. name will be short for that we used Char.
+
+Text
+description = models.TextField()
+It used for long text without predefined maximum length. description will be long for that we used Text.
+
+Email
+email = models.EmailField()
+It used when you want the field to accept just email input
+
+URL
+Used to store url link
+Example:
+class Website(models.Model):
+    url = models.URLField()
+Store data like https://www.example.com/
+
+Decimal
+total_amount = models.DecimalField(max_digits=7, decimal_places=2)
+It has predefined max digits and decimal places
+Example about decimal_places:
+decimal_places=2 could be 00.00
+decimal_places=3 could be 00.000
+Example about max_digits:
+max_digits=7 max value could be 1234567.00
+max_digits=4 max value could be 1234.00
+
+Float
+price = models.FloatField()
+It doesn't have predefined max digits and decimal places, but you can give it max_digits if you want
+Example:
+1452.32324
+the difference between float and decimal is Float doesn't have decimal places.
+
+Integer
+points = models.IntegerField()
+It store Positive and Negative Integer value that refer to integers greater than or less than or equal to zero.
+
+PositiveInteger
+age = models.PositiveIntegerField()
+It store Positive Integer value that refer to integers greater than or equal to zero.
+
+File
+document = models.FileField(upload_to='documents/')
+image = models.FileField(upload_to='images/')
+video = models.FileField(upload_to='videos/')
+You can use it to store image, video, document, excel, and pdf etc.
+upload_to is required. it used to define folder name that will be used to store the file.
+
+
+JSON
+user_data = JSONField()
+It stores dictionary of data
+Example:
+{"age": 30, "email": "user@example.com", "location": "City"}
+
+Slug
+product_code = models.SlugField()
+It doesn't accept spaces in the field
+You can't store p 123, you can store it as p-123 or p_123 so, you can use underscores or hyphens
