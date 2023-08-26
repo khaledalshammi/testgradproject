@@ -1,0 +1,82 @@
+--Signal--
+Signals provide a way to allow decoupled applications to get notified when certain actions occur elsewhere in the application.
+Signal has pre and post save.
+pre: signal will implement before saving the object
+post: signal will implement after saving the object
+
+Examples:
+1.
+In following example, don't forget to configure your email in settings.py
+from django.db import models
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.core.mail import send_mail
+
+@receiver(post_save, sender=User)
+def send_welcome_email(sender, instance, created, **kwargs):
+    if created:
+        subject = 'Welcome to our website!'
+        message = 'Thank you for registering on our website.'
+        from_email = 'admin@example.com'
+        recipient_list = [instance.email]
+        send_mail(subject, message, from_email, recipient_list)
+signal will send email to the users after they registered.
+It doesn'is not suitable to make it pre_signal because it doesn't make sense to send email to users before they register.
+
+
+2.
+from django.db import models
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+class UserActivityLog(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    activity = models.CharField(max_length=100)
+    timestamp = models.DateTimeField(auto_now_add=True)
+def log_user_activity(sender, instance, **kwargs):
+    activity = f"User {instance.user.username} performed {instance.activity}."
+    UserActivityLog.objects.create(user=instance.user, activity=activity)
+post_save.connect(log_user_activity, sender=UserActivityLog)
+
+signal will be implemented after creating instance of UserActivityLog.
+It's possible to use pre_save to modify the log entry just before it's saved.
+@receiver(pre_save, sender=UserActivityLog)
+def update_activity_message(sender, instance, **kwargs):
+    instance.activity = f"User {instance.user.username} is about to perform {instance.activity}."
+
+
+3.
+from django.db import models
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.userprofile.save()
+
+Automatically create a user profile when a new user registers.
+pre_save is not suitable because it's generally used to modify the fields of the current instance being saved.
+To create a related profile automatically, post_save is more appropriate.
+
+
+4.
+class Client(models.Model):
+    full_name = models.CharField(max_length=200, verbose_name="Full Name")
+    slug_name = models.SlugField(max_length=222, verbose_name="Slug Name", blank=True, null=True)
+    def __str__(self):
+        return self.slug_name
+
+@receiver(pre_save, sender=Client)
+def handle_slug(sender, **kwargs):
+    instance = kwargs['instance']
+    instance.slug_name = slugify(instance.slug_name)
+
+slugify the name before saving the instance.

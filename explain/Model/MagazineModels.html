@@ -1,0 +1,65 @@
+--Magazine Models--
+
+from django.db import models
+from django.contrib.auth.models import User
+from django.urls import reverse
+
+class Author(models.Model):
+    name = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Name")
+    email = models.EmailField(verbose_name="Email")
+    profile_image = models.ImageField(upload_to='profile_images/', verbose_name="Profile Image")
+    bio = models.TextField("Bio")
+
+    def __str__(self):
+        return self.email
+
+    def get_absolute_url(self):
+        return reverse('blogs:author_details', args={self.pk})
+
+
+class MagazineManager(models.Manager):
+    def magazines(self):
+        return self.all().order_by("-publish_date")
+
+class Magazine(models.Model):
+    title = models.CharField(max_length=150, verbose_name="Title")
+    publish_date = models.DateTimeField(auto_now_add=True, verbose_name="Publish date")
+    description = models.TextField(verbose_name="Description")
+    objects = MagazineManager()
+
+    def __str__(self) -> str:
+        return self.title
+
+    def get_absolute_url(self):
+        return reverse('blogs:magazine_details', args={self.pk})
+
+
+class BlogManager(models.Manager):
+    def published_magazines(self, magazine):
+        blogs = Blog.objects.filter(magazine_id=magazine, status="p")
+        return blogs.order_by("-publish_date")
+
+    def author_blogs(self, author):
+        blogs = Blog.objects.filter(author=author, status='p')
+        return blogs
+
+class Blog(models.Model):
+    STATUS_CHOICES = [
+        ('d', 'Draft'),
+        ('p', 'Published'),
+        ('w', 'Withdrawn'),
+    ]
+    author = models.ForeignKey(Author, on_delete=models.CASCADE, verbose_name="Author")
+    title = models.CharField(max_length=150, verbose_name="Title")
+    content = models.TextField(verbose_name="Content")
+    magazine = models.ForeignKey(Magazine, on_delete=models.CASCADE, verbose_name="Magazine")
+    status = models.CharField(max_length=1, choices=STATUS_CHOICES, verbose_name="Status")
+    cover_image = models.ImageField(upload_to='blog_covers/', verbose_name="Image")
+    publish_date = models.DateTimeField(verbose_name="Publish date", blank=True, null=True)
+    objects = BlogManager()
+
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        return reverse('blogs:blog_details', args={self.pk})

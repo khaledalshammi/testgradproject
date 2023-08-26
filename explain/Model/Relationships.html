@@ -1,0 +1,111 @@
+--Relationships--
+OnToOne
+OneToOneField(Model Name, on_delete logic)
+Each instance of the model on one side of the relationship is associated with, at most, one instance on the other side.
+Examples:
+
+from django.contrib.auth.models import User
+from django.db import models
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    bio = models.TextField()
+    avatar = models.ImageField(upload_to='avatars/')
+
+Each User can be related to one Profile otherwise, each Profile can be related to at most one User.
+
+class Passport(models.Model):
+    passport_number = models.CharField(max_length=20)
+    expiration_date = models.DateField()
+
+class Visa(models.Model):
+    passport = models.OneToOneField(Passport, on_delete=models.CASCADE)
+    country = models.CharField(max_length=50)
+    entry_date = models.DateField()
+    expiration_date = models.DateField()
+
+Each Passport can be related to one Visa otherwise, each Visa can be related to at most one Passport.
+
+class Student(models.Model):
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    date_of_birth = models.DateField()
+
+class StudentRecord(models.Model):
+    student = models.OneToOneField(Student, on_delete=models.CASCADE)
+    grade_point_average = models.DecimalField(max_digits=4, decimal_places=2)
+    attendance_percentage = models.DecimalField(max_digits=5, decimal_places=2)
+
+Each Student can be related to one StudentRecord otherwise, each StudentRecord can be related to at most one Student.
+
+
+ManyToOne
+ForeignKey(Model Name, on_delete logic)
+
+class Blog(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+
+class Post(models.Model):
+    blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+
+Each Blog can be related to many Posts otherwise, each Post can be related to at most one Blog.
+
+class Category(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+
+class Product(models.Model):
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    name = models.CharField(max_length=200)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+
+Each Category can be related to many Products otherwise, each Product can be related to at most one Category.
+
+class University(models.Model):
+    name = models.CharField(max_length=100)
+    location = models.CharField(max_length=100)
+
+class Student(models.Model):
+    university = models.ForeignKey(University, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    major = models.CharField(max_length=100)
+
+Each University can be related to many Students otherwise, each Student can be related to at most one University.
+
+ManyToMany
+ManyToManyField(Model Name)
+
+class Playlist(models.Model):
+    name = models.CharField(max_length=100)
+    songs = models.ManyToManyField(Song)
+
+class Song(models.Model):
+    title = models.CharField(max_length=200)
+    artist = models.CharField(max_length=100)
+    duration = models.DurationField()
+
+Each Playlist can be related to many Songs otherwise, each Song can be related to many Playlists.
+
+class Author(models.Model):
+    name = models.CharField(max_length=100)
+    biography = models.TextField()
+
+class Book(models.Model):
+    title = models.CharField(max_length=200)
+    authors = models.ManyToManyField(Author)
+    publication_date = models.DateField()
+
+Each Author can be related to many Books otherwise, each Book can be related to many Authors.
+
+class Actor(models.Model):
+    name = models.CharField(max_length=100)
+    birthdate = models.DateField()
+
+class Movie(models.Model):
+    title = models.CharField(max_length=100)
+    actors = models.ManyToManyField(Actor)
+
+Each Actor can be related to many Movies otherwise, each Movie can be related to many Actors.

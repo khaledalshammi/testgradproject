@@ -1,0 +1,28 @@
+--Include--
+If you have a code that you want to use it in many places.
+Instead of duplication and retyping the code you can put it.
+In html file then you can include it as much you want.
+
+Simple Example:
+If you want hello world to appear in home.html, index.html, details.html
+Create includes folder inside templates folder.
+Create an html and name it whatever you want, for example hello.html
+
+Insert the following code in hello.html file.
+<h1>Hello World</h1>
+
+To include this file in home, index and details files.
+Follow the following steps in each file:
+
+{% include 'includes/hello.html' %}
+
+you can pass parameter with include.
+let's change hello.html file content.
+
+hello.html:
+<h1>hello {{name}}</h1>
+
+To include this file in home, index and details files.
+Follow the following steps in each file:
+
+{% include 'includes/hello.html' with name="khaled" %}

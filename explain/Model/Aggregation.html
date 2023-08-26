@@ -1,0 +1,58 @@
+--Aggregation--
+
+Count
+Calculates the number of records in a queryset.
+class Book(models.Model):
+    title = models.CharField(max_length=100)
+from django.db.models import Count
+num_books = Book.objects.aggregate(total_books=Count('id'))
+Call it:
+num_books["total_books"]
+It counts the records in id column
+
+Sum
+Calculates the sum of a numeric field in a queryset
+class Order(models.Model):
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+from django.db.models import Sum
+total_order_amount = Order.objects.aggregate(total_amount=Sum('amount'))
+Call it:
+total_order_amount["total_amount"]
+It sum the records in amount column
+
+Avg
+Calculates the average value of a numeric field in a queryset.
+class Review(models.Model):
+    rating = models.DecimalField(max_digits=3, decimal_places=1)
+from django.db.models import Avg
+average_rating = Review.objects.aggregate(avg_rating=Avg('rating'))
+Call it:
+average_rating["avg_rating"]
+It sum the records in rating column then divide it on records counts.
+
+Min
+Calculates the minimum value of a field in a queryset.
+class Product(models.Model):
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+from django.db.models import Min
+cheapest_product_price = Product.objects.aggregate(min_price=Min('price'))
+Call it:
+cheapest_product_price["min_price"]
+It search about minimum value in price column
+
+Max
+Calculates the maximum value of a field in a queryset.
+class Sale(models.Model):
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+from django.db.models import Max
+highest_sale_amount = Sale.objects.aggregate(max_amount=Max('amount'))
+Call it:
+highest_sale_amount["max_amount"]
+It search about maximum value in amount column
+
+Note
+1. highest_sale_amount = Sale.objects.aggregate(max_amount=Max('amount'))
+2. highest_sale_amount = Sale.objects.aggregate(Max('amount'))
+If you didn't give it a name how you will call it in second example?
+by default Django will create the name in this convention:
+column__aggregation so, the answer will be amount__max

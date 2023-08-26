@@ -36,3 +36,6 @@ author = models.ForeignKey(Author, on_delete=models.SET_DEFAULT, default=1)
 If the author is deleted. the related books will be bind with default id author.
 Example: if the book related to author id = 2, if author id = 2 is deleted.
 the ForeignKey reference will equal 1, so it will be binded with author id = 1.
+
+CASCADE - SET_NULL - PROTECT and RESTRICT - DO_NOTHING - SET_DEFAULT
+Can be used with all relationships

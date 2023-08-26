@@ -1,0 +1,52 @@
+--Extent--
+
+Imagine that your homepage has navbar and footer, but when you navigate
+To another page navbar and footer are not displayed, how to solve that?
+Will you type your navbar and footer in each page? is it make sense? No
+By retyping the navbar and footer codes you will need to imports required files.
+To shorten these steps and all this effort we will use extend logic.
+in extent file we will create a blocks for needed logic like content and title.
+
+Create base.html in templates that exists in the same level with project root.
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+    {% include 'includes/navbar.html' %}
+    {% block content %}
+    {% endblock %}
+    {% include 'includes/footer.html' %}
+</body>
+</html>
+
+Extent base.html file in wherever you want for example in home.html and in details.html
+
+home.html:
+{% extends 'base.html' %}
+
+{% block title %}
+    "Home"
+{% endblock %}
+
+{% block content %}
+    <h1>Home Page</h1>
+{% endblock %}
+
+
+details.html:
+{% extends 'base.html' %}
+
+{% block title %}
+    "details"
+{% endblock %}
+
+{% block content %}
+    <h1>Details Page</h1>
+{% endblock %}
+
+In previous examples home and details will have nav and footer without retyping the code.

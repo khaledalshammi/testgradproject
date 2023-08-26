@@ -6,12 +6,9 @@ class Files(models.Model):
     video = models.FileField(upload_to='videos/')
 In project root go to settings.py
 Add those lines
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-]
-STATIC_ROOT = BASE_DIR / "staticfiles"
-<img src="../../Images/model/file.png">
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+<img src="../../Images/model/imfi.png">
 Last step
 In project root go to urls.py
 Add those lines

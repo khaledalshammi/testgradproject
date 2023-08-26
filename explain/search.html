@@ -1,0 +1,70 @@
+--search--
+Create your model.
+class Book(models.Model):
+    title = models.CharField(max_length=100)
+
+Create forms.py in your app.
+Give a name to your input to receive the input value by that name.
+
+from django import forms
+class SearchForm(forms.Form):
+    search_query = forms.CharField(label='Search', max_length=100, widget=forms.TextInput(attrs={'name': 'search_query'}))
+
+Navigate to your view.
+Add those lines in views file.
+
+from django.shortcuts import render
+from .models import Book
+from .forms import SearchForm
+
+def search_view(request):
+    form = SearchForm()
+    search_results = []
+    if request.method == 'POST':
+        search_query = request.POST.get('search_query')        
+        if search_query:
+            search_results = Book.objects.filter(title__icontains=search_query)
+            context = {'form': form, 'search_results': search_results}    
+            return render(request, 'blogs/search_results.html', context)
+
+    context = {'form': form}    
+    return render(request, 'blogs/search_results.html', context)
+
+Explanation:
+Create an instance of the SearchForm.
+Check if the HTTP request method is a POST request
+Get the input value by passing the input name between the get function.
+Check if the search query was provided (not empty)
+if it provided will loop through the books object to check if book contains or match the search value.
+render template search_results with context that contais the form and search results.
+if not provided
+render template search_results with context that contais just the form.
+
+Create urls.py in your app.
+Add those lines in urls file.
+
+from django.urls import path
+from . import views
+urlpatterns = [
+    path('search/', views.search_view, name='search_view'),
+]
+
+In your app create a templates folder then create a app folder name then insert the search_results.html
+Insert the following codes in the search_results.html
+
+<form method="post" action="{% url 'search_view' %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Search</button>
+</form>
+
+{% if search_results %}
+    <h2>Search Results:</h2>
+    <ul>
+        {% for item in search_results %}
+            <li>{{ item.title }}</li> 
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<video src="../vid/search.mp4" type="video" controls >

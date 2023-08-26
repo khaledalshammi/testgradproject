@@ -1,0 +1,40 @@
+To change the database into MySQL follow the following steps.
+Install the MySQL database adapter by using the terminal.
+pip install mysqlclient
+Go to project root > settings.py. Update Database Settings.
+Change the database configuration.
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'your_database_name',
+        'USER': 'your_mysql_user',
+        'PASSWORD': 'your_mysql_password',
+        'HOST': 'localhost',  # Set the host if not using the default 'localhost'
+        'PORT': '',           # Set the port if not using the default MySQL port (3306)
+    }
+}
+
+Run Migrations
+python manage.py migrate
+
+
+To change the database into PostgreSQL follow the following steps.
+Install the PostgreSQL database adapter by using the terminal.
+pip install psycopg2
+Go to project root > settings.py. Update Database Settings.
+Change the database configuration.
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'your_database_name',
+        'USER': 'your_postgresql_user',
+        'PASSWORD': 'your_postgresql_password',
+        'HOST': 'localhost',  # Set the host if not using the default 'localhost'
+        'PORT': '',           # Set the port if not using the default PostgreSQL port (5432)
+    }
+}
+
+Run Migrations
+python manage.py migrate

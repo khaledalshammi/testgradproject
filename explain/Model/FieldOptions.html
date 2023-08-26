@@ -29,6 +29,11 @@ favorite_pizza = models.CharField(
 name = models.CharField(max_length=30, null=True, blank=True, default="khaled")
 default will give the column a initial value that can be changed
 
+db_index
+name = models.CharField(max_length=100, db_index=True)
+if you have a huge database and you will call that field constantly, you can use it to make the calling done quickly.
+index will be created on the name column. This index will improve the performance of queries involving the name field.
+
 help_text
 email = models.EmailField(help_text="Enter valid email")
 help text will help user to understand the field or what should enter

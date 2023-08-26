@@ -1,0 +1,44 @@
+--Pagination--
+
+you will follow always those steps:
+Pagingation is fixed code you can just change the number of how many item in the paginator.
+
+from django.core.paginator import Paginator
+
+def products(request):
+    products = Product.objects.all()
+    paginator = Paginator(products,4) # 4 products will be displayed in each page at most
+    page = request.GET.get('page')
+    paged_products = paginator.get_page(page)
+    return render(request,'products/products.html',{'products':paged_products})
+
+Add view to the app urls:
+path('products/', views.products, name='products'),
+
+Enable and display paginator in products.html
+
+products.html:
+insert the following codes:
+{% if products.has_other_pages %}
+    <ul class="pagination">
+        {% if products.has_previous %}
+    <li class="page-item"><a class="page-link" href="?page={{products.previous_page_number}}">Previous</a></li>
+        {% else %}
+			<li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+        {% endif %}
+        {% for i in products.paginator.page_range %}
+            {% if products.number == i %}
+	    		<li class="page-item active"><a class="page-link" href="#">{{i}}</a></li>
+            {% else %}
+                <li class="page-item"><a class="page-link" href="?page={{i}}">{{i}}</a></li>
+            {% endif %}
+	    {% endfor %}
+        {% if products.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{products.next_page_number}}">Next</a></li>
+        {% else %}
+            <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
+        {% endif %}
+    </ul>
+{% endif %}
+
+<video src="../vid/pag.mp4" type="video" controls ></video>

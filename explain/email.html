@@ -1,0 +1,100 @@
+--Send Email--
+Config Your email data in .env file.
+Create .env file in same level with project root to create Environment Variables.
+
+Inside .env file put that code and insert your email data.
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = "Your Email Port"
+EMAIL_USE_TLS = "True"
+EMAIL_HOST_USER = "Your Email"
+EMAIL_HOST_PASSWORD = "Your Email Password"
+
+Why to create .env file?
+Because when we want to deploy the code. we want the to keep sensitive information hidden.
+Before deploying the codes. don't forget to put .env file in .gitignore file.
+
+In settings.py insert the following steps:
+
+import os
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_PORT = config('EMAIL_PORT',cast=int)
+EMAIL_USE_TLS = config('EMAIL_USE_TLS',cast=bool)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+
+To send an email you have 2 ways:
+
+1.
+from django.core.mail import EmailMessage
+email = EmailMessage(
+    'Subject',
+    'Message',
+    'from@example.com',
+    ['to@example.com'],
+    reply_to=['another@example.com'], #optional
+    fail_silently=False, # determines whether exceptions during sending should be raised or not
+)
+email.attach() #optional
+email.send()
+Example:
+email = EmailMessage(
+    'Test Email',
+    'Hello world',
+    'from@example.com',
+    ['to@example.com', 'to@example.com'],
+    reply_to=['another@example.com'],
+    fail_silently=False,
+)
+# Attach a file to the email
+with open('path/to/attachment.pdf', 'rb') as attachment_file:
+    email.attach('attachment.pdf', attachment_file.read(), 'application/pdf')
+    
+email.send()
+
+
+2.
+Get the data from html form:
+
+Html:
+<form method="post" enctype="multipart/form-data" action="{% url 'send_email' %}">
+    {% csrf_token %}
+    <label for="subject">Subject:</label>
+    <input type="text" name="subject" required><br><br>
+    
+    <label for="message">Message:</label>
+    <textarea name="message" rows="4" required></textarea><br><br>
+    
+    <label for="attachment">Attachment:</label>
+    <input type="file" name="attachment"><br><br>
+
+    <label for="email">Your Email:</label>
+    <input name="email" rows="4" required></input><br><br>
+    
+    <input type="submit" value="Send Email">
+</form>
+
+View:
+def send_email(request):
+    if request.method == 'POST':
+        subject = request.POST['subject']
+        message = request.POST['message']
+        from = request.POST['email']
+        attachment = request.FILES.get('attachment')
+
+        email = EmailMessage(
+            subject,
+            message,
+            from,
+            ['to@example.com'],
+        )
+        
+        if attachment:
+            email.attach(attachment.name, attachment.read(), attachment.content_type)
+        
+        try:
+            email.send()
+            return HttpResponse("Email sent successfully!")
+        except:
+            return HttpResponse("An error occurred while sending the email.")
+    return render(request, 'index.html')

@@ -1,0 +1,31 @@
+--Sessions--
+Sessions are a way to store and retrieve user data on the server side between different requests.
+You can use sessions to store user-specific information such as login credentials, shopping cart contents, and more.
+when you store data in session. it will not be deleted until you deleted through clearing the session from browser or code logic.
+Even if you refresh or close the browser. session data will still there.
+
+Examples:
+
+Create Session
+request.session['username'] = 'example_user'
+request.session['cart'] = ['item1', 'item2', 'item3']
+
+
+Update Session
+request.session['cart'].append('item4')
+Adding a new item to the cart
+request.session['username'] = 'new_username'
+Changing the username
+
+
+Delete Session
+del request.session['cart']
+Remove the cart from the session
+request.session.clear()
+Clear all session data
+
+Get Session
+username = request.session.get('username', 'default_username')
+cart_items = request.session.get('cart', [])
+Note: second parameter is default value.
+that means if username is null or not exist, username will equal 'default_username'

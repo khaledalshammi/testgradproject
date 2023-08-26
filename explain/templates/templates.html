@@ -1,0 +1,46 @@
+Template will consist of html files.
+To create a template for your view. you have tow ways
+First way: create templates folder in you app then create inside that templates folder create folde by app name.
+Example:
+Return render(request, 'blogs/search_results.html', context)
+Search_results.html should exists in blogs/templates/blogs/search_results.html
+Second:
+Create folder in same level with project root.
+Structure should be like that.
+
+Project rooj
+--urls.py
+--settings.py
+app
+app
+templates
+
+
+In project root > settings.py
+Change TEMPLATES list into that codes.
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [BASE_DIR / 'templates']
+        ,
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+Example:
+Return render(request, 'blogs/search_results.html', context)
+search_results.html should exists in templates/blogs/search_results.html
+If you return render(request, 'search_results.html', context)
+search_results.html should exists in templates/search_results.html
