@@ -1,27 +1,100 @@
 --Field Lookups--
 
+lookups enable you to retrieve data that matches certain criteria.
+
+
 exact
+matches the field value exactly.
+example: Laptop not equal laptop
+Product.objects.get(name__exact="Laptop")
+
+
 iexact
+matches the field value exactly, case-insensitively.
+example: Laptop equal laptop
+Product.objects.filter(name__iexact="laptop")
+
+
 contains
+filters objects with a field containing the specified substring.
+example: Django not equal django
+Article.objects.filter(title__contains="Django")
+
+
 icontains
+is similar to contains, but it's case-insensitive.
+example: Django equal django
+Article.objects.filter(title__icontains="django")
+
+
 in
+checks if a field value is in a specified list.
+Product.objects.filter(category__in=["Electronics", "Books"])
+
+
 gt
+<
+retrieves objects with a field value greater than the specifiedvalue.
+Order.objects.filter(total_amount__gt=100)
+
+
 gte
+<=
+retrieves objects with a field value greater than or equal to the specified value.
+Order.objects.filter(total_amount__gte=100)
+
+
 lt
+>
+retrieves objects with a field value less than the specified value.
+Event.objects.filter(start_date__lt=date.today())
+
+
 lte
+>=
+retrieves objects with a field value less than or equal to the specified value.
+Event.objects.filter(start_date__lte=date.today())
+
+
 startswith
+filters objects with a field value starting with the specified substring.
+example: J not equal j
+Author.objects.filter(name__startswith="J")
+
+
 istartswith
+filters objects with a field value starting with the specified substring, but it's case-insensitive.
+example: J equal j
+Author.objects.filter(name__istartswith="j")
+
+
 endswith
+filters objects with a field value ending with the specified substring.
+example: .txt not equal .TXT
+File.objects.filter(name__endswith=".txt")
+
+
 iendswith
+filters objects with a field value ending with the specified substring, but it's case-insensitive.
+example: .txt equal .TXT
+File.objects.filter(name__iendswith=".TXT")
+
+
 range
+retrieves objects within a specified range of values.
+Product.objects.filter(price__range=(50, 200))
+
+
 date
-year
-month
-day
-week
-week_day
+allow you to filter based on date-related components.
+Event.objects.filter(start_date__year=2023, start_date__month=8)
+
+
 time
-hour
-minute
-second
+allow you to filter based on time-related components.
+Event.objects.filter(start_time__hour=15, start_time__minute=30)
+
+
 isnull
+checks if a field value is NULL or None
+Product.objects.filter(description__isnull=True)

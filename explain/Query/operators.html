@@ -1,5 +1,34 @@
 --Operators--
 
+Models:
+class Person(models.Model):
+    name = models.CharField(max_length=100)
+    age = models.PositiveIntegerField()
+
 AND
+2 conditions must be True
+looking for a person whose name is khaled and he is 22 years old
+if there is a person whose name is khaled, but he is not 22 years old
+otherwise If there is a person who is 22 years old but whose name is not Khaled
+one of the two conditions is True and the other is False
+that means the result will be, found 0
+otherwise If there is a person who is 22 years old and whose name is Khaled
+both conditions are True
+that means the result will not be, found 0
+
+Person.objects.filter(name="khaled") & Person.objects.filter(age=22)
+Person.objects.filter(name="khaled").filter(age=22)
+
 OR
-XOR
+at least 1 of conditions must be True
+looking for a person whose name is khaled or he is 22 years old
+if there is a person whose name is khaled, but he is not 22 years old Or vice versa
+one of conditions is True
+that means the result will not be, found 0
+if there is no person named khaled and he is not 22 years old
+both conditions are False
+that means the result will be, found 0
+
+from django.db.models import Q
+# Use Q when you want to use OR condition
+Model.objects.filter(Q(name="khaled") | Q(age=22))

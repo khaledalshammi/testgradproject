@@ -1,24 +1,109 @@
 --Methods--
 
 filter()
-exclude()
-order_by()
-reverse()
-distinct()
-values()
-values_list()
+# get all books with a rating more than 4.5
+Book.objects.filter(rating__gt=4.5)
+
+# get all users over 19 and whose name is ahmed
+User.objects.filter(name="ahmed", age__gt=19)
+
+
 all()
+# get all books
+Book.objects.all()
+
+
 get()
+used with unique or primary fields
+# get single book
+Book.objects.get(id=1)
+
+
+exclude()
+# get all books with a rating less than 4.6
+Book.objects.exclude()(rating__gt=4.5)
+
+# get all users under 19 and whose name is not ahmed
+User.objects.exclude()(name="ahmed", age__gt=19)
+
+
+order_by()
+Ascending
+Product.objects.order_by('price')
+Descending
+Product.objects.order_by('-price')
+
+
+values()
+retrieve Model with specific fields
+in the following example product_data will contains 2 products with their name and price without other fields like id description etc.
+Product.objects.values('name', 'price')
+# result will be a list of dictionary
+# [{'name':'shirt', 'price':20.23}, {'name':'Tshirt', 'price':24.00}]
+
+
+values_list()
+retrieve Model with specific fields
+in the following example product_data will contains 2 products with their name and price without other fields like id description etc.
+Product.objects.values_list('name', 'price')
+# result will be a list of tuples
+# [('name'='shirt', 'price'=20.23), ('name'='Tshirt', 'price'=24.00)]
+
+
+distinct()
+Book.objects.values("name").distinct()
+# book names will be distinct in the list of dictionary
+
+
 create()
+Person.objects.create()
+
+
 get_or_create()
+author, created = Author.objects.get_or_create(name="J.K. Rowling")
+# created is boolean, if new author is created. The created flag will be True. otherwise it will be False
+
+
 update_or_create()
+author, created = Author.objects.update_or_create(name="mousa", defaults={name="ahmed"})
+If an author with the name "mousa" exists, the field specified in the defaults dictionary will be updated with the new values. The created flag will be False.
+If no author with the name "mousa" exists, a new author will be created with the field from the defaults dictionary. The created flag will be True.
+
+
 count()
+returns the number of objects that match a given query.
+Book.objects.count()
+
+
 latest()
+retrieves the latest object based on a specified field, usually a date-related field.
+BlogPost.objects.latest('publish_date')
+
+
 earliest()
+retrieves the earliest object based on a specified field, usually a date-related field.
+Event.objects.earliest('start_date')
+
+
 first()
+retrieves the first object in the QuerySet.
+Product.objects.first()
+
+
 last()
-aggregate()
+retrieves the last object in the QuerySet.
+Order.objects.last()
+
+
 exists()
-contains()
+checks if there are any objects in the QuerySet.
+UserProfile.objects.exists()
+
 update()
+updates one or more fields of objects that match a given query.
+Customer.objects.filter(premium=True).update(discount=0.15)
+
+
 delete()
+removes objects that match a given query from the database.
+Event.objects.filter(start_date__lt=date.today()).delete()
