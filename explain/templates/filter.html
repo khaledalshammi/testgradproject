@@ -1,0 +1,117 @@
+--Filters--
+
+add
+add argument to the value
+{{ comment|add:"3" }}
+output: if comment equal 1, the display value will be 4
+
+
+capfirst
+Capitalizes the first letter of the value.
+{{ name|capfirst }}
+output: if name equal khaled, the display value will be Khaled
+
+
+lower
+convert name to lower case
+{{ name|lower }}
+output: if name equal KHaled, the display value will be khaled
+
+
+upper
+convert name to upper case
+{{ name|upper }}
+output: if name equal khaled, the display value will be KHaled
+
+
+truncatewords
+display defined number of words
+get the first 2 words
+{{ description|truncatewords:2 }}
+output: if description equal hello this is khaled, the display value will be hello this
+
+
+truncatechars
+display defined number of letters
+get the first 4 letters
+{{ name||truncatechars:4 }} # khaled
+output: khal...
+
+default
+if name is null, default value will display
+{{ name|default:"None" }}
+
+
+length
+return length of string and list
+{{ authors|length }} # [author1, author2, author3]
+{{ name|length }} # khaled
+output: the display value in the first example is 3, in the second example is 6
+
+
+cut
+remove define argument
+{{ name|cut:"a" }}
+output: if name equal khaled alshami. the display name will be khled lshami
+
+
+first
+return the first item in the list
+{{ author_ids|first }} #[1, 2, 3]
+output: the display value is 1
+
+
+last
+return the last item in the list
+{{ author_ids|last }} #[1, 2, 3]
+output: the display value is 3
+
+
+get_digit
+return digit depends on given value
+count will be from right
+{{ points|get_digit:"3" }} #2435
+output: the display value is 4
+
+
+join
+convert list to string by specific spacing
+{{ my_list|join:"..." }} ["hello", "world"]
+output: hello...world
+{{ my_list|join:" - " }}
+output: hello - world
+
+
+length_is
+check if length is equal to given length
+{% if name|length_is:"6" %} # khaled
+    {{name}}
+{% endif %}
+
+
+pluralize
+Returns a plural suffix if value is not single. plural suffix is s letter.
+You have {{ num_messages }} message{{ num_messages|pluralize }}.
+output: if messages > 1. the display value will be You have 3 messages
+change default pluralize value (s)
+{{ num_categories }} category{{ num_categories|pluralize:"ies" }}.
+output: if categories > 1. the display value will be 3 categories
+
+
+slice
+get specific elements of list.
+{{ names|slice:":3" }} # ["ahmed", "naser", "raghad", "ehsan"]
+return the first elements of list
+result: ["ahmed", "naser", "raghad"]
+
+
+slugify
+Converts spaces in specific value into hyphens.
+{{ name|slugify }} # khaled zakaria alshammi
+output: the display value will be khaled-zakaria-alshammi
+
+
+wordcount
+Returns how many words in specific value.
+{{ name|wordcount }} # khaled zakaria alshammi
+output: the display value will be 3

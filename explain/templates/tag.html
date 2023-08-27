@@ -1,0 +1,80 @@
+--Tags--
+
+use {{}} with variable
+
+
+if 
+{% if published %}
+    {{blog.name}}
+{% endif %}
+
+
+for
+{% for author in authors %}
+    <h1>{{ author.name }}</h1>
+{% endfor %}
+
+
+csrf_token
+{% csrf_token %}
+used for CSRF protection in form method (POST)
+
+
+include partial template
+{% include 'navbar' %}
+
+
+extends base template (inheritance)
+{% extends 'base.html' %}
+
+
+comment
+{% comment %}
+    comment
+{% endcomment %}
+
+
+filter
+used to implement multiple filters
+{% filter truncatewords:10|lower %}
+    {{description}}
+{% endfilter %}
+
+
+firstof
+{% firstof name first_name last_name "Not find" %}
+instead of:
+{% if name %}
+    {{ name }}
+{% elif first_name %}
+    {{ first_name }}
+{% elif last_name %}
+    {{ last_name }}
+{% else %}
+    Not find
+{% endif %}
+
+
+forloop.counter
+{% for author in authors %}
+    <h1>{{forloop.counter}}. {{ author.name }}</h1>
+{% endfor %}
+output:
+1. khaled
+2. alshammi
+
+
+url
+use to navigate to particular view
+path('article/<int:article_id>/', views.article_detail, name='article_detail')
+<a href="{% url 'article_detail' article_id=1 %}">Read Article 1</a>
+
+
+i18n
+used in the top to enable translation.
+{% load i18n %}
+
+
+static
+used in the top to use static items like css, js, fonts and images.
+{% load static %}
