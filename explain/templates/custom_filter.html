@@ -1,0 +1,88 @@
+--Custom Filter--
+
+Create templatetags folder in your app.
+Create file there and name it whatever you want.
+for example:
+blog_filters.py
+
+Insert following lines in the top.
+
+from django import template
+register = template.Library()
+
+add your first filter.
+2 steps:
+register your filter name
+add your filter function
+
+Examples
+
+1.
+upper first letter
+@register.filter(name="uppercase_first_letter")
+def uppercase_first_letter(value):
+    return value[0].upper() + value[1:]
+
+
+2.
+reverse list or string
+@register.filter(name="reverse")
+def reverse(value):
+    return value[::-1]
+
+
+3.
+truncates a string to a specified length and adds ellipsis if it's longer.
+@register.filter(name="truncate_string")
+def truncate_string(value, length):
+    if len(value) > length:
+        return value[:length] + '.....'
+    return value
+
+
+4.
+calculates the difference between two dates and returns it in days.
+@register.filter(name="date_difference")
+def date_difference(value, date):
+    delta = value - date
+    return delta.days
+
+
+5.
+subtracts a value from the input.
+@register.filter(name="subtract")
+def subtract(value, arg):
+    return value - arg
+
+
+use those filters in your templates.
+{% load blog_filters %}
+
+
+1.
+{{ name|uppercase_first_letter }}
+input: khaled
+output: Khaled
+
+2.
+{{ name|reverse }}
+input: khaled
+output: delahk
+
+3.
+{{ description|truncate_string:10 }}
+input: hello this is khaled alshammi
+output: hello this.....
+input: hello
+output: hello
+
+4.
+Number of days between today and last seen {{ last_login_date|date_difference:date.today }}
+input: 2023-08-20
+# current data is 2023-08-25
+output: 5 days
+
+5.
+{{ review|subtract:5 }}
+input: 7
+output: 2

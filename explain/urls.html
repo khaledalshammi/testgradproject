@@ -1,0 +1,97 @@
+--Url--
+
+In urls.py you will configure your url for each view.
+Import following codes
+
+project root urls.py:
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path("blogs/", include("blogs.urls")),
+]
+
+blogs app urls.py:
+from django.urls import path
+from . import views
+
+app_name = 'blogs' # optional
+
+urlpatterns = [
+    path("blogs/", views.blogs, name="blogs"),
+    path("blog/<int:id>/", views.blog_by_id, name="blog_by_id"),
+    path("blog/<str:name>/", views.blog_by_name, name="blog_by_name"),
+    path("blog/<slug:slug_name>/", views.blog_by_slug_name, name="blog_by_slug_name"),
+]
+
+first path:
+# example: blogs
+def blogs(request):
+    return
+
+second path:
+# example: blog/1
+def blog_by_id(request, id): # <int:id> parameter
+    return
+
+third path:
+# example: blog/sport
+def blog_by_name(request, name): # <str:name> parameter
+    return
+
+fourth path:
+# example: blog/sport-magazine
+def blog_by_slug_name(request, slug_name): # <slug:slug_name> parameter
+    return
+
+why to put name in the each path, what's its benefit?
+Instead of using <a href="blogs/blogs"></a>
+name will enable you to use the following logic:
+
+<a href="{% url 'path name' parameters %}"></a>
+
+Examples:
+1.
+<a href="{% url 'blogs' %}"></a>
+
+2.
+<a href="{% url 'blog_by_id' 1 %}"></a>
+
+3.
+<a href="{% url 'blog_by_name' sport %}"></a>
+
+4.
+<a href="{% url 'blog_by_slug_name' sport-blog %}"></a>
+
+Why to insert app name before urlpatterns, what's its benefit?
+To differentiate between same path name in different apps.
+for examples:
+
+blogs app > urls
+urlpatterns = [
+    path("blogs/", views.blogs, name="blogs"),
+]
+
+magazines app > urls
+urlpatterns = [
+    path("blogs/", views.blogs, name="blogs"),
+]
+
+to prevent that error use app name before urlpatterns
+how to use app name with navigation
+
+<a href="{% url 'app name : path name' parameters %}"></a>
+
+Examples:
+1.
+<a href="{% url 'blogs:blogs' %}"></a>
+
+2.
+<a href="{% url 'blogs:blog_by_id' 1 %}"></a>
+
+3.
+<a href="{% url 'blogs:blog_by_name' sport %}"></a>
+
+4.
+<a href="{% url 'blogs:blog_by_slug_name' sport-blog %}"></a>
