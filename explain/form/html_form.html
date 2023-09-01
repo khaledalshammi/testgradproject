@@ -1,0 +1,111 @@
+--Html Form--
+
+form has two main parameters:
+
+1. method:
+post or get.
+post method used to delete, update and create data.
+get method used to get data and display it.
+
+2. action:
+define to which view url should form navigate when form submitted.
+
+Note:
+Insert {% csrf_token %} always when the method is post.
+
+example form:
+<form method="post" action="">
+    {% csrf_token %}
+    <button type="submit"></button>
+</form>
+
+pass hidden data with form:
+Note:
+To enable view function to access the data passed from html file give it a name.
+<form method="post" action="">
+    <input hidden name="id" value="1" />
+    {% csrf_token %}
+
+    <button type="submit"></button>
+</form>
+
+
+
+display form from forms.py:
+
+<form method="post" action="">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit"></button>
+</form>
+
+{{ form.as_div }} display form wrapped in <div> tags.
+{{ form.as_table }} display form wrapped in table cells wrapped in <tr> tags.
+{{ form.as_p }} display form in wrapped in <p> tags.
+{{ form.as_ul }} display form in wrapped in <li> tags.
+
+display errors that come from forms.py:
+
+display all errors in the top:
+<form method="post">
+    {% csrf_token %}
+    
+    {% if form.non_field_errors %}
+        <ul class="errorlist">
+            {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {{ form.as_p }}
+    <button type="submit"></button>
+</form>
+
+
+display each error individually:
+<form method="post" action="">
+    {% csrf_token %}
+    {{ form.field_name.label_tag }}
+    {{ form.field_name }}
+    {% if form.field_name.errors %}
+        <ul class="errorlist">
+        {% for error in form.field_name.errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+    ...
+    <button type="submit"></button>
+</form>
+
+for example login form:
+class LoginForm(forms.Form):
+    username = forms.CharField(label='Your username', max_length=150)
+    password = forms.CharField(label='Your password', widget=forms.PasswordInput(attrs={'class': 'pt-2'}))
+
+<form method="post" action="">
+    {% csrf_token %}
+
+    {{ form.username.label_tag }}
+    {{ form.username }}
+    {% if form.username.errors %}
+        <ul class="errorlist">
+        {% for error in form.username.errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+
+    {{ form.password.label_tag }}
+    {{ form.password }}
+    {% if form.password.errors %}
+        <ul class="errorlist">
+        {% for error in form.password.errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+
+    <button type="submit"></button>
+</form>

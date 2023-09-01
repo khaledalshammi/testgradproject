@@ -1,0 +1,48 @@
+--FormView--
+built in class used to handle the form.
+
+Form:
+from django import forms
+class ContactForm(forms.Form):
+    subject = forms.CharField()
+    message = forms.CharField(widget=forms.Textarea)
+    from = forms.EmailField()
+
+View:
+from app.forms import ContactUsForm
+from django.views.generic.edit import FormView        
+class ContactFormView(FormView):
+    template_name = 'contact_us.html'
+    form_class = ContactUsForm
+    # if form is valid. it will redirect user to success_url
+    success_url = '/successfully/'
+
+    def form_valid(self, form):
+        # This method is called when valid form data has been POSTed.
+        # It should return an HttpResponse.
+        # get data entered by user by using self.cleaned_data
+        subject = self.cleaned_data["subject"]
+        message = self.cleaned_data["message"]
+        from = self.cleaned_data["from"]
+        email = EmailMessage(
+            subject,
+            message,
+            from,
+            ['to@example.com'],
+        )
+        email.send()
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        # This method is called when the form data is invalid.
+        # The form will automatically include error messages for fields with errors.
+        # Render the form on the same page with errors.
+        return self.render_to_response(self.get_context_data(form=form))
+
+Url:
+from django.urls import path
+from app.views import ContactFormView
+
+urlpatterns = [
+    path('contact_us/', ContactFormView.as_view(), name='contact-us'),
+]

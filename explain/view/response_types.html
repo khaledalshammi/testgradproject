@@ -1,0 +1,62 @@
+--Response Types--
+
+
+HttpResponse()
+can be used to return text, even if you pass html, it will interpret it.
+examples:
+HttpResponse("Hello world")
+HttpResponse('<h1>Page not found</h1>')
+
+
+HttpResponseNotFound()
+used to return html error.
+example:
+error = '<h1>Page not found</h1>'
+HttpResponseNotFound(error)
+
+
+Http404()
+used to return text error.
+example:
+Http404("Magazine does not exist")
+
+
+render()
+used to return template and its context
+context used to store data that we want to display it in template
+render(request, "blogs/blogs.html", {"name":"khaled"})
+
+
+redirect()
+redirect to another view url
+example:
+urlpatterns = [
+    path("blogs/", views.blogs, name="blogs"),
+    path("blog/<int:id>/", views.blog_by_id, name="blog_by_id"),
+]
+redirect('blogs')
+redirect('blog_by_id', id=2)
+redirect('/blogs/blogs/')
+
+
+get_object_or_404()
+it will return object if it's not null, otherwise it will return error.
+example:
+1.
+get_object_or_404(Blog, pk=4)
+instead of:
+object = Blog.objects.get(pk=4)
+if not object:
+    raise Http404("No Blog matches the given Id.")
+2.
+get_object_or_404(Blog, rating__gt=4, pk=2)
+get_object_or_404(Model, filter, primaryKey)
+
+
+get_list_or_404()
+it will return list if it's not null, otherwise it will return error.
+get_list_or_404(Blog, available=True)
+instead of:
+objects = list(Blog.objects.filter(available=True))
+if not objects:
+    raise Http404("There are no blogs available.")

@@ -1,0 +1,25 @@
+--Login--
+
+from django.contrib.auth import authenticate, login
+from django.shortcuts import render, redirect
+from .forms import CustomLoginForm
+
+def login_view(request):
+    if request.method == 'POST':
+        form = CustomLoginForm(request, data=request.POST)
+        if form.is_valid():
+            # Authenticate user
+            user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
+            if user is not None:
+                # Log in the user
+                login(request, user)
+                return redirect('dashboard')  # Redirect to a dashboard or any other page
+    else:
+        form = CustomLoginForm()
+    return render(request, 'login.html', {'form': form})
+
+explanation:
+CustomLoginForm require username and password.
+when user submit the form. data will be cleand from form.
+authenticate used to define if user is registered by form password and username.
+if user is authenticated. he will login the system

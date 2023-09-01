@@ -1,11 +1,12 @@
 from phonenumber_field.modelfields import PhoneNumberField
 phone_no = PhoneNumberField(_('Mobile number'))
 "phonenumber_field",
-'django_countries',
+pip install django-phonenumber-field
+pip install "django-phonenumber-field[phonenumberslite]"
 
 from filer.fields.image import FilerImageField
 ambassador_photo = FilerImageField(verbose_name=_('Ambassador Photo'), null=True, blank=True, on_delete=models.CASCADE, related_name='ambassador_photo')
-
+pip install django-filer
 
 from ckeditor.fields import RichTextField as HTMLField
 ambassador_information = HTMLField(verbose_name=_('Ambassador information [EN]'), default='', blank=True)

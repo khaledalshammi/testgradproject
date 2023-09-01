@@ -1,0 +1,62 @@
+--DetailView--
+built in class used to display single model object.
+
+Model:
+class Book(models.Model):
+    title = models.CharField(max_length=100)
+    available = models.BooleanField(default=False)
+
+
+View:
+from django.views.generic import DetailView
+from books.models import Book
+class BookDetailView(DetailView):
+    model = Book # Book.objects.get(id=id)
+    context_object_name = 'book' # {'book':model}
+
+
+Url:
+from books.views import BookDetailView
+urlpatterns = [
+    path('book/<int:pk>/', BookDetailView.as_view()),
+]
+
+
+its features:
+1.
+get_context_data
+used to add more context data and change default context name.
+example:
+def get_context_data(self, **kwargs):
+    context = super().get_context_data(**kwargs)
+    context['book'] = Book.objects.get(id=id)
+    return context
+
+2.
+queryset
+used to define which objects to return.
+example:
+queryset = Book.objects.get(id=id, available=True)
+
+3.
+template_name
+used to define template name that will be used to display the data.
+example:
+template_name = 'books/book.html'
+
+4.
+get_object
+used to customize how to retrive an object
+
+ulrs.py
+path('book/<int:bookid>/', BookDetailView.as_view())
+
+view.py
+class BookDetailView(DetailView):
+    model = Book
+    context_object_name = 'book'
+
+    def get_object(self, queryset=None):
+        # Retrieve the book using the primary key from the URL
+        book_id = self.kwargs.get('bookid')
+        return self.model.objects.get(pk=book_id)

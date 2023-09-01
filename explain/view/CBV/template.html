@@ -1,0 +1,33 @@
+--TemplateView--
+built in class used to display template.
+we have two ways to use it
+first way:
+
+from django.views.generic import TemplateView
+urlpatterns = [
+    path('about_us/', TemplateView.as_view(template_name="about_us.html")),
+    ...
+]
+
+second way:
+used to pass context data
+
+View:
+from django.views.generic import TemplateView
+
+class AboutUsView(TemplateView):
+    template_name = "about.html"
+    # built in function to customize your context
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # Add context data here
+        context['hi'] = 'Hello World'
+        
+        return context
+
+Url:
+from app.views import AboutUsView
+urlpatterns = [
+    path('about_us/', AboutUsView.as_view()),
+]

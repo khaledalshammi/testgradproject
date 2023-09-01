@@ -1,0 +1,44 @@
+--ListView--
+built in class used to display multiple model objects.
+
+Model:
+class Book(models.Model):
+    title = models.CharField(max_length=100)
+    available = models.BooleanField(default=False)
+
+
+View:
+from django.views.generic import ListView
+from books.models import Book
+
+class BookListView(ListView):
+    model = Book # Book.objects.all()
+    context_object_name = 'books' # {'books':model}
+
+Url:
+from books.views import BookListView
+urlpatterns = [
+    path('books/', BookListView.as_view()),
+]
+
+its features:
+1.
+get_context_data
+used to add more context data and change default context name.
+example:
+def get_context_data(self, **kwargs):
+    context = super().get_context_data(**kwargs)
+    context['books_list'] = Book.objects.all()
+    return context
+
+2.
+queryset
+used to define which objects to return.
+example:
+queryset = Book.objects.filter(available=True)
+
+3.
+template_name
+used to define template name that will be used to display the data.
+example:
+template_name = 'books/books.html'

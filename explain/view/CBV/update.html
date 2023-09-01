@@ -1,0 +1,34 @@
+--UpdateView--
+built in class used to update model object.
+
+Model:
+class Book(models.Model):
+    title = models.CharField(max_length=100)
+    available = models.BooleanField(default=False)
+
+
+View:
+from django.views.generic.edit import UpdateView
+from django.urls import reverse
+from app.models import Book
+from app.forms import UpdateForm
+class BookUpdateView(UpdateView):
+    model = Book # update object of Book
+    fields = ['title', 'available'] # define required fields that want to update
+    form_class = UpdateForm
+    success_url = reverse('home')
+
+
+Url:
+from django.urls import path
+from app.views import BookUpdateView
+urlpatterns = [
+    path('update/<int:pk>/', BookUpdateView.as_view(), name='book-update'),
+]
+
+Explanation: 
+you don't need to explicitly check whether the form is valid or invalid.
+before saving the object.
+Django's UpdateView handles form validation for you automatically.
+If the form is valid, it will update the object in the database and then redirect to the success_url.
+If the form is invalid, it will redisplay the form with validation errors.

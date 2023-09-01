@@ -1,0 +1,30 @@
+--Permissions and Authorization--
+
+each models has those permissions:
+has_view_ModelName()
+has_add_ModelName()
+has_change_ModelName()
+has_delete_ModelName()
+
+to check if user has particular permission, use following logic.
+if request.user.has_perm('app_name.PermissionName'):
+for example:
+if request.user.has_perm('blogs.add'):
+
+create your own permission:
+
+from app-name.models import model-name
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
+
+content_type = ContentType.objects.get_for_model(model-name)
+permission = Permission.objects.create(
+    codename='',
+    name='',
+    content_type=content_type,
+)
+
+Explanation:
+content_type = define to which model you will insert the permission.
+codename = unique identifier for the permission.
+name = human-readable name for the permission. It's used to display the permission's purpose to administrators and users.

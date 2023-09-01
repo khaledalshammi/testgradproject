@@ -1,0 +1,62 @@
+--Forms--
+
+use forms with user input
+forms enable you to validate the inputs
+
+each app has its own forms
+Creat app
+
+in your app create forms.py
+
+build your form logic
+
+login example:
+
+from django import forms
+class LoginForm(forms.Form):
+    username = forms.CharField(label='Your username', max_length=150)
+    password = forms.CharField(label='Your password', widget=forms.PasswordInput(attrs={'class': 'pt-2'}))
+
+in previous example:
+username is text field that has label and max length.
+password is text field but we changed its widget to PasswordInput
+to hide password content into stars (********). has its own class.
+
+
+contact example:
+
+from django import forms
+class ContactForm(forms.Form):
+    subject = forms.CharField(max_length=100)
+    message = forms.CharField(widget=forms.Textarea)
+    sender = forms.EmailField()
+    attachment = forms.FileField(required=False)
+
+
+register example included validation:
+from django import forms
+class RegisterForm(forms.Form):
+    username = forms.CharField(label='Your username', max_length=150)
+    email = forms.EmailField()
+    password = forms.CharField(label='Your password', widget=forms.PasswordInput)
+    confirm_password = forms.CharField(label='Confirm Your password', widget=forms.PasswordInput)
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError("This email is already associated with a user.")
+        return email
+
+    def clean(self):
+    cleaned_data = super().clean()
+    password = cleaned_data.get('password')
+    confirm_password = cleaned_data.get('confirm_password')
+    if password and confirm_password and password != confirm_password:
+        raise forms.ValidationError("Passwords do not match.")
+    return cleaned_data
+
+Explanation:
+cleaned_data: enable you to get the input value
+forms.ValidationError: display error
+clean_email function: we checked if the email is already bined with another user
+clean function: we checked if password match the confirm_password

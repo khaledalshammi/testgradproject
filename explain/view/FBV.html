@@ -1,0 +1,103 @@
+--function based view--
+
+build your first view function
+
+function should always return response as view, text, JSON etc.
+
+from django.http import HttpResponse
+def start(request):
+    return HttpResponse("Hello world")
+
+don't forget to create a path for each function.
+<img src="../../Images/FBV/fbv1.png" />
+
+def display_id(request, id):
+    return HttpResponse("ID: "+str(id))
+
+<img src="../../Images/FBV/fbvid.png" />
+<img src="../../Images/FBV/fbvid2.png" />
+
+
+handle form:
+
+import your form
+
+from django.shortcuts import render
+from .forms import FormName
+
+def user_form_view(request):
+    # if form is submitted
+    if request.method == 'POST':
+        # request.POST has form data
+        form = FormName(request.POST)
+        # pass form data to form then check if form is valid
+        if form.is_valid():
+            # get data value from form by cleaning it
+            field = form.cleaned_data['FieldName']
+            # after you clean the data. you can use it to create, update and send emails etc.
+            return redirect()
+    # if form is not submitted that means form is null
+    else:
+        form = UserForm()
+
+    return render(request, 'user_form.html', {'form': form})
+
+
+Explain create, add, update and delete functions
+we will use the following model:
+
+class Car(models.Model):
+    name = models.CharField(max_length=150)
+
+Create:
+from django.shortcuts import render, redirect
+from .forms import CreateForm
+from .models import Car
+
+def create_car(request):
+    if request.method == 'POST':
+        form = CreateForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data['name']
+            Car.objects.create(name=name)
+            return redirect("home")
+    else:
+        form = CreateForm()
+    return render(request, 'create_form.html', {'form': form})
+
+
+Update:
+from django.shortcuts import render, redirect
+from .forms import UpdateForm
+from .models import Car
+
+def update_car(request, id):
+    car = get_object_or_404(Car, id=id)
+    if request.method == 'POST':
+        form = UpdateForm(request.POST, instance=car)
+        if form.is_valid():
+            name = form.cleaned_data['name']
+            car.name = name
+            car.save()
+            return redirect("home")
+    else:
+        form = UpdateForm(instance=car)
+    return render(request, 'update_form.html', {'form': form})
+
+why to pass instance?
+it will give the input a default value by current car value
+for example:
+with passing instance:
+<img src="../../Images/FBV/fbv3.png">
+
+without instance:
+<img src="../../Images/FBV/fbv4.png">
+
+delete:
+from django.shortcuts import redirect
+from .models import Car
+
+def delete_car(request, id):
+    car = get_object_or_404(Car, id=id)
+    car.delete()
+    return redirect("home")

@@ -1,0 +1,28 @@
+--DeleteView--
+built in class used to delete model object.
+
+Model:
+class Book(models.Model):
+    title = models.CharField(max_length=100)
+    available = models.BooleanField(default=False)
+
+
+View:
+from django.views.generic.edit import DeleteView
+from django.urls import reverse
+from app.models import Book
+class BookDeleteView(DeleteView):
+    model = Book # delete object of Book
+    success_url = reverse('home')
+
+
+Url:
+from django.urls import path
+from app.views import BookDeleteView
+urlpatterns = [
+    path('delete/<int:pk>/', BookDeleteView.as_view(), name='book-delete'),
+]
+
+Explanation: 
+DeleteView handles deletion automatically.
+If the deletion is valid, it will delete the object from the database and then redirect to the success_url.

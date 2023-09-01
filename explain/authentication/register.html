@@ -1,0 +1,42 @@
+--Register--
+
+defaul user model:
+username - password - email - first_name - last_name
+
+To create user create_user(username, email, password)
+
+use python manage.py shell
+
+from django.contrib.auth.models import User
+new user
+user = User.objects.create_user(
+    'KhaledDotNet', 'khalod.zeko@gmail.com', 'kchdmejcma2d'
+    )
+# update user
+user.first_name = "khaled"
+user.last_name = "alshammi"
+user.save()
+
+register view:
+
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User  # Import User model
+from django.shortcuts import render, redirect
+from .forms import CustomRegisterForm
+
+def register_view(request):
+    if request.method == 'POST':
+        form = CustomRegisterForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            user = User.objects.create_user(username=username, email=email, password=password)  # Specify field names
+            user = authenticate(username=username, password=password)  # Provide username and password
+            if user is not None:
+                # Log in the user
+                login(request, user)
+                return redirect('dashboard')  # Redirect to a dashboard or any other page
+    else:
+        form = CustomRegisterForm()
+    return render(request, 'register.html', {'form': form})
