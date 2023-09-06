@@ -1,0 +1,74 @@
+--Check--
+
+Use check to check parts of the project
+example check if app exists in INSTALLED_APPS
+check if particular middleware exists in MIDDLEWARE
+
+create check file in your app.
+check current app.
+
+import settings to check if the app exists in 
+
+from django.conf import settings
+from django.core.checks import Error, register
+from django.urls import reverse, NoReverseMatch
+
+#register your chech function
+@register()
+def fitst_check(app_configs, **kwargs):
+    # store the errors
+    errors = []
+    app = 'app name'
+    if app in settings.INSTALLED_APPS:
+        try:
+            # reverse any url in the app. to make sure it exists
+            reverse('list')
+        except NoReverseMatch:
+            errors.append(
+                Error('Looks like there is no app name url',
+                        hint=f'Create a app name url',
+                        obj=settings,
+                        id='app.E002',
+                    )
+                )
+    return errors
+
+
+check if apps needed exists in installed app
+@register()
+def second_check(app_configs, **kwargs):
+    errors = []
+    apps_needed = [
+        'jazzmin',
+        'django.contrib.humanize',
+        'admin_custom_menu',
+        "tabular_permissions",
+        "ckeditor",
+        "crispy_forms",
+        'django_countries',
+        "crispy_bootstrap4",
+    ]
+    # loop through each app in apps_needed. to check that all apps are exist in INSTALLED_APPS
+    for app in apps_needed:
+        if app not in settings.INSTALLED_APPS:
+            errors.append(
+                Error(f'{app} is not in the INSTALLED_APPS',
+                    hint=f'Add {app} to INSTALLED_APPS .',
+                    obj=settings,
+                    id='base.E001',
+                    )
+            )
+    return errors
+
+check middleware
+@register()
+def check_middleware(app_configs, **kwargs):
+    errors = []
+    if "django.contrib.auth.middleware.AuthenticationMiddleware" not in settings.MIDDLEWARE:
+        errors.append(
+            Error('auth is missing',
+                  hint=f'Add django.contrib.auth.middleware.AuthenticationMiddleware to the MIDDLEWARE',
+                  obj=settings,
+                  id='base.E002')
+        )
+    return errors

@@ -11,6 +11,11 @@ each test case has multiple tests
 test should start with test word (test_)
 create test case class:
 
+Model:
+class Client(models.Model):
+    name = models.CharField(max_length=100, verbose_name='Name')
+    email = models.EmailField(unique=True)
+
 #first class test
 from django.test import TestCase
 from cars.models import Client
@@ -39,6 +44,11 @@ class Client(TestCase)
         Client.objects.create(name="noor", email="noor@gmail.com")
         # 4 clients
         self.assertEquals(Client.objects.count(), 4)
+Run your tests:
+run all test files in your project:
+python manage.py test
+run specific test file:
+python manage.py test appname
 
 Test view
 from django.test import TestCase
