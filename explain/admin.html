@@ -2,6 +2,14 @@
 
 we use admin to customize admin layout, display data and accessability.
 
+create admin user:
+python manage.py createsuperuser
+after you create the super user.
+run you website.
+navigate to localhost/admin/
+for example: http://127.0.0.1:8000/admin/
+<img src="../Images/admin/admin.png" >
+
 models:
 class Client(models.Model):
     name = models.CharField(max_length=100, verbose_name='Name')

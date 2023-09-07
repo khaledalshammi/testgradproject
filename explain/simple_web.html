@@ -1,0 +1,303 @@
+--Simple Website--
+
+the webiste will be about displaying magazines with its blogs.
+blogs will be created by author.
+
+Create the virtual environment.
+python -m venv environment magazinevenv
+
+Activate the environment.
+use: magazinevenv\Scripts\activate
+
+Install the Django.
+python -m pip install Django
+
+create magazine project.
+django-admin startproject magazine
+
+create blogs app.
+python manage.py startapp blogs
+
+download jazzmin package
+pip install -U django-jazzmin
+
+create urls file in blogs app
+
+add blogs and jazzmin into INSTALLED_APPS
+
+INSTALLED_APPS = [
+    'jazzmin',
+    'django.contrib.admin',
+    ...
+    'blogs'
+]
+
+configure the templates by change DIRS in TEMPLATES list into
+'DIRS': [BASE_DIR / 'templates']
+
+configure static and media files.
+STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+STATIC_ROOT = BASE_DIR / "staticfiles"
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+change magazine urls into following code to include blogs urls, configure static and media files.
+
+from django.contrib import admin
+from django.urls import include, path
+from django.conf.urls.static import static
+from django.conf import settings
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path("", include("blogs.urls")),
+]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
+
+Models:
+from django.db import models
+from django.contrib.auth.models import User
+
+class Author(models.Model):
+    name = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Name")
+    email = models.EmailField(verbose_name="Email", unique=True)
+    profile_image = models.ImageField(upload_to='profile_images/', verbose_name="Profile Image")
+    bio = models.TextField(verbose_name="Bio")
+
+    def __str__(self):
+        return self.email
+
+
+class Magazine(models.Model):
+    title = models.CharField(max_length=150, verbose_name="Title")
+    publish_date = models.DateTimeField(auto_now_add=True, verbose_name="Publish date")
+    description = models.TextField(verbose_name="Description")
+
+    def __str__(self) -> str:
+        return self.title
+
+
+class Blog(models.Model):
+    STATUS_CHOICES = [
+        ('d', 'Draft'),
+        ('p', 'Published'),
+        ('w', 'Withdrawn'),
+    ]
+    author = models.ForeignKey(Author, on_delete=models.CASCADE, verbose_name="Author")
+    title = models.CharField(max_length=150, verbose_name="Title")
+    content = models.TextField(verbose_name="Content")
+    magazine = models.ForeignKey(Magazine, on_delete=models.CASCADE, verbose_name="Magazine")
+    status = models.CharField(max_length=1, choices=STATUS_CHOICES, verbose_name="Status")
+    cover_image = models.ImageField(upload_to='blog_covers/', verbose_name="Image")
+    publish_date = models.DateTimeField(verbose_name="Publish date", blank=True, null=True)
+
+    def __str__(self) -> str:
+        return self.title
+
+author will have unique email, could have multiple blogs.
+magazine could have multiple blogs.
+blog should be binded with magazine and author.
+
+run:
+1. python manage.py migrate
+2. python manage.py makemigrations
+3. python manage.py migrate
+
+
+register your models in admin.py
+from django.contrib import admin
+from .models import Blog, Magazine, Author
+
+admin.site.register(Blog)
+admin.site.register(Magazine)
+admin.site.register(Author)
+
+run:
+1. python manage.py createsuperuser
+2. python manage.py runserver
+
+navigate to /admin/
+for example: http://127.0.0.1:8000/admin/
+
+create data.
+
+build your view.
+
+from django.shortcuts import render
+from .models import *
+def magazines(request):
+    magazines = Magazine.objects.all().order_by("-publish_date")
+    return render(request, "blogs/homepage.html", {"magazines":magazines})
+
+get all magazines ordered from the latest magazines to the old ones
+
+
+def magazine(request, pk):
+    magazine = Magazine.objects.get(pk=pk)
+    blogs = Blog.objects.filter(magazine_id=pk, status="p").order_by("-publish_date")
+    return render(request, "blogs/magazine_details.html", {"magazines":magazine, "blogs":blogs})
+
+get magazine by its id. get all published blogs related to that magazine
+
+
+def blog(request, pk):
+    blog = Blog.objects.get(pk=pk)
+    return render(request, "blogs/blog_details.html", {"blog":blog})
+
+get blog by its id
+
+
+def author(request, pk):
+    author = Author.objects.get(pk=pk)
+    blogs = Blog.objects.filter(author=author, status='p')
+    return render(request, "blogs/author.html", {"author":author, "blogs":blogs})
+
+get author by its id. get all published blogs related to that author
+
+
+add previous views into urls file:
+
+from django.urls import path
+from . import views
+app_name = 'blogs'
+urlpatterns = [
+    path('', views.magazines, name="magazines"),
+    path('magazine/<int:pk>/', views.magazine, name="magazine-details"),
+    path('blog/<int:pk>/', views.blog, name="blog-details"),
+    path('author/<int:pk>/', views.author, name="author-details"),
+]
+
+base view used as shared view for all views. 
+create templates folder inside blogs app.
+create blogs folder inside templates folder.
+add base.html, homepage.html, magazine_details.html, blog_details.html, author.html
+
+base.html:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>KDjango</title>
+</head>
+<body>
+    <div class="header">
+        <h1>KDjango Site</h1>
+        <div>
+            <h3>
+                <a href="{% url 'blogs:magazines' %}">Magazines</a>
+            </h3>
+        </div>
+    </div>
+    {% block content %}{% endblock %}
+</body>
+</html>
+
+
+homepage.html:
+{% include "blogs/base.html" %}
+
+{% block content %}
+    {% for magazine in magazines %}
+        <div>
+            <br>
+            <a href="{% url 'blogs:magazine-details' magazine.id %}">
+                <p>{{ magazine.title }}</p>
+            </a>
+            <br>
+            <hr>
+        </div>
+    {% endfor %}
+{% endblock %}
+
+
+magazine_details.html:
+{% include "blogs/base.html" %}
+
+{% block content %}
+    <div>
+        <h3>{{ magazine.title }}</h3>
+        <p>{{ magazine.description }}</p>
+        <p>
+            Created on {{ magazine.publish_date }}
+        </p>
+    </div>
+    <br>
+    <br>
+    <br>
+    {% if blogs %}
+        {{ blogs|length }} Blogs:
+        <br/>
+        <br/>
+        <br/>
+        {% for blog in blogs %}
+            <div>
+                <a href="{% url 'blogs:blog-details' blog.id %}">
+                    <img src="{{ blog.cover_image.url }}">
+                </a>
+                <p>Author: {{ blog.author.name }}</p>
+                <a href="{% url 'blogs:blog-details' blog.id %}">
+                    <h4>Title: {{ blog.title }}</h4>
+                </a>
+            </div>
+            <br/>
+            <br/>
+            <br/>
+        {% endfor %}
+    {% else %}
+        <h3>0 blogs... No blogs to display</h3>
+    {% endif %}
+{% endblock %}
+
+
+blog_details.html:
+{% include "blogs/base.html" %}
+
+{% block content %}
+<div>
+    <div>
+        <img src="{{ blog.cover_image.url }}">
+    </div>
+    <div>
+        <h4>Magazine: {{ blog.magazine }}</h4>
+        <a href="{% url 'blogs:author-details' blog.author.id %}"><h4>Author: {{ blog.author.name }}</h4></a>
+        <h4>Title: {{ blog.title }}</h4>
+        <h4>Created on: {{ blog.publish_date }}</h4>
+    </div>
+    <div>
+        <p>{{ blog.content }}</p>
+    </div>
+</div>
+{% endblock %}
+
+
+author.html:
+{% include "blogs/base.html" %}
+
+{% block content %}
+    <div>
+        <h3>Name: {{ author.name }}</h3>
+        <p>Email: {{ author.email }}</p>
+        <p>{{ author.bio }}</p>
+        <img src="{{ author.profile_image.url }}">
+        <br>
+    </div>
+    <br>
+    <br>
+    {% if blogs %}
+        {{ blogs|length }} Blogs
+        <br/>
+        <br/>
+        <br/>
+        {% for blog in blogs %}
+            <div>
+                <a href="{% url 'blogs:blog-details' blog.id %}"><h4>Title: {{ blog.title }}</h4></a>
+            </div>
+            <br/>
+            <br/>
+        {% endfor %}
+    {% else %}
+        <p>0 Blogs</p>
+    {% endif %}
+{% endblock %}
